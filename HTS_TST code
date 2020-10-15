@@ -1,0 +1,34 @@
+# DEPENDENCIES ------------------------------------------------------------
+
+library(tidyverse)
+library(vroom)
+library(ICPIutilities)
+
+
+# IMPORT ------------------------------------------------------------------
+
+path <- "C:/Users/jhoover/OneDrive - Credence Management Solutions LLC/Documents/R files/Data.FI HRH activity/Genie_PSNU_IM_Kenya_Frozen_53313de9-ede6-43b2-8aa3-5f0d8e6017aa.txt"
+
+df <- vroom(path) 
+
+# MUNGE HTS_TST MODALITIES ----------------------------------------------------
+
+#filter
+df_hts <- df %>% 
+  filter(fundingagency == "USAID",
+         fiscal_year == 2020,
+         indicator == "HTS_TST",
+         standardizeddisaggregate %in% c("Modality/Age/Sex/Result", "Modality/Age Aggregated/Sex/Result")) 
+
+#aggregate
+df_hts <- df_hts %>% 
+  filter(targets != 0) %>% 
+  group_by(operatingunit, psnu, psnuuid, indicator, modality) %>%
+  summarise(targets = sum(targets, na.rm = TRUE)) %>% 
+  ungroup()
+
+#spread
+df_hts <- df_hts %>% 
+  mutate(modality = str_remove_all(modality, " ")) %>% 
+  pivot_wider(names_from = c(indicator, modality),
+              values_from = targets)
