@@ -1,0 +1,217 @@
+# DEPENDENCIES ------------------------------------------------------------
+
+library(tidyverse)
+library(vroom)
+library(ICPIutilities)
+
+
+# IMPORT ------------------------------------------------------------------
+
+path <- "C:/Users/jhoover/OneDrive - Credence Management Solutions LLC/Documents/R files/Data.FI HRH activity/Genie_PSNU_IM_Kenya_Frozen_53313de9-ede6-43b2-8aa3-5f0d8e6017aa.txt"
+
+df <- vroom(path) 
+
+# MUNGE HTS_TST MODALITIES ----------------------------------------------------
+
+#filter
+df_hts <- df %>% 
+  filter(fundingagency == "USAID",
+         fiscal_year == 2020,
+         indicator == "HTS_TST",
+         standardizeddisaggregate %in% c("Modality/Age/Sex/Result", "Modality/Age Aggregated/Sex/Result")) 
+
+#aggregate
+df_hts <- df_hts %>% 
+  filter(targets != 0) %>% 
+  group_by(operatingunit, psnu, psnuuid, indicator, modality) %>%
+  summarise(targets = sum(targets, na.rm = TRUE)) %>% 
+  ungroup()
+
+#spread in HTS dataset
+df_hts <- df_hts %>% 
+  mutate(modality = str_remove_all(modality, " ")) %>% 
+  pivot_wider(names_from = c(indicator, modality),
+              values_from = targets)
+
+# MUNGE HTS_SELF MODALITIES ----------------------------------------------------
+
+#filter
+df_htsself <- df %>% 
+  filter(fundingagency == "USAID",
+         fiscal_year == 2020,
+         indicator == "HTS_SELF",
+         standardizeddisaggregate %in% c("Total Numerator")) 
+
+#aggregate
+df_htsself <- df_htsself %>% 
+  filter(targets != 0) %>% 
+  group_by(operatingunit, psnu, psnuuid, indicator, modality) %>%
+  summarise(targets = sum(targets, na.rm = TRUE)) %>% 
+  ungroup()
+
+#spread
+df_htsself <- df_htsself %>% 
+  mutate(modality = str_remove_all(modality, " ")) %>% 
+  pivot_wider(names_from = c(indicator, modality),
+              values_from = targets)
+
+#testing merge code for HTS_TST and HTS_SELF targets
+df_htsmerged <- merge(df_hts, df_htsself)
+
+# MUNGE PREP_NEW  ----------------------------------------------------
+
+#filter
+df_prepnew <- df %>% 
+  filter(fundingagency == "USAID",
+         fiscal_year == 2020,
+         indicator == "PrEP_NEW",
+         standardizeddisaggregate %in% c("Total Numerator")) 
+
+#aggregate
+df_prepnew <- df_prepnew %>% 
+  filter(targets != 0) %>% 
+  group_by(operatingunit, psnu, psnuuid, indicator, modality) %>%
+  summarise(targets = sum(targets, na.rm = TRUE)) %>% 
+  ungroup()
+
+#spread in PrEPNEW dataset
+df_prepnew <- df_prepnew %>% 
+  mutate(modality = str_remove_all(modality, " ")) %>% 
+  pivot_wider(names_from = c(indicator, modality),
+              values_from = targets)
+
+# MUNGE PREP_CURR  ----------------------------------------------------
+
+#filter
+df_prepcurr <- df %>% 
+  filter(fundingagency == "USAID",
+         fiscal_year == 2020,
+         indicator == "PrEP_CURR",
+         standardizeddisaggregate %in% c("Total Numerator")) 
+
+#aggregate
+df_prepcurr <- df_prepcurr %>% 
+  filter(targets != 0) %>% 
+  group_by(operatingunit, psnu, psnuuid, indicator, modality) %>%
+  summarise(targets = sum(targets, na.rm = TRUE)) %>% 
+  ungroup()
+
+#spread in PrEPCURR dataset
+df_prepcurr <- df_prepcurr %>% 
+  mutate(modality = str_remove_all(modality, " ")) %>% 
+  pivot_wider(names_from = c(indicator, modality),
+              values_from = targets)
+
+#add in new MSD to test df HTS_TST from MSD-----------------------------
+pathmsdkenya <- "C:/Users/jhoover/OneDrive - Credence Management Solutions LLC/Downloads/MER_Structured_Datasets_PSNU_IM_FY18-21_20200918_v2_1_Kenya.txt"
+
+dfmsd <- vroom(pathmsdkenya) 
+
+#filter
+df_htsmsd <- dfmsd %>% 
+  filter(fundingagency == "USAID",
+         fiscal_year == 2020,
+         indicator == "HTS_TST",
+         standardizeddisaggregate %in% c("Modality/Age/Sex/Result", "Modality/Age Aggregated/Sex/Result")) 
+
+#aggregate
+df_htsmsd <- df_htsmsd %>% 
+  filter(targets != 0) %>% 
+  group_by(operatingunit, psnu, psnuuid, indicator, modality) %>%
+  summarise(targets = sum(targets, na.rm = TRUE)) %>% 
+  ungroup()
+
+#spread in HTS dataset
+df_htsmsd <- df_htsmsd %>% 
+  mutate(modality = str_remove_all(modality, " ")) %>% 
+  pivot_wider(names_from = c(indicator, modality),
+              values_from = targets)
+
+#resume back here with TX_NEW------------------------------------------
+# MUNGE TX_NEW data ----------------------------------------------------
+
+#filter
+df_txnew <- dfmsd %>% 
+  filter(fundingagency == "USAID",
+         fiscal_year == 2020,
+         indicator == "TX_NEW",
+         standardizeddisaggregate %in% c("Total Numerator", "KeyPop/HIVStatus")) 
+
+#aggregate
+df_txnew <- df_txnew %>% 
+  filter(targets != 0) %>% 
+  group_by(operatingunit, psnu, psnuuid, indicator, modality, standardizeddisaggregate) %>%
+  summarise(targets = sum(targets, na.rm = TRUE)) %>% 
+  ungroup()
+
+#spread in TX_CURR dataset
+df_txnew <- df_txnew %>% 
+  mutate(modality = str_remove_all(modality, " ")) %>% 
+  pivot_wider(names_from = c(indicator, modality, standardizeddisaggregate),
+              values_from = targets)
+
+#TX_CURR---------------------------------------------------
+# MUNGE TX_CURR data ----------------------------------------------------
+
+#filter
+df_txcurr <- dfmsd %>% 
+  filter(fundingagency == "USAID",
+         fiscal_year == 2020,
+         indicator == "TX_CURR",
+         standardizeddisaggregate %in% c("Total Numerator", "KeyPop/HIVStatus")) 
+
+#aggregate
+df_txcurr <- df_txcurr %>% 
+  group_by(operatingunit, psnu, psnuuid, indicator, modality, standardizeddisaggregate) %>%
+  summarise(targets = sum(targets, na.rm = TRUE)) %>% 
+  ungroup()
+
+#spread in TX_CURR dataset
+df_txcurr <- df_txcurr %>% 
+  mutate(modality = str_remove_all(modality, " ")) %>% 
+  pivot_wider(names_from = c(indicator, modality, standardizeddisaggregate),
+              values_from = targets)
+
+#PMTCT_ART-------------------------------------------------------
+# MUNGE PMTCT_ART data ----------------------------------------------------
+
+#filter
+df_pmtctart <- dfmsd %>% 
+  filter(fundingagency == "USAID",
+         fiscal_year == 2020,
+         indicator == "PMTCT_ART",
+         otherdisaggregate %in% c("Life-long ART, New", "Life-long ART, Already")) 
+
+#aggregate
+df_pmtctart <- df_pmtctart %>% 
+  group_by(operatingunit, psnu, psnuuid, indicator, modality, otherdisaggregate) %>%
+  summarise(targets = sum(targets, na.rm = TRUE)) %>% 
+  ungroup()
+
+#spread in PMTCT_ART dataset
+df_pmtctart <- df_pmtctart %>% 
+  mutate(modality = str_remove_all(modality, " ")) %>% 
+  pivot_wider(names_from = c(indicator, modality, otherdisaggregate),
+              values_from = targets)
+
+#TX_PVLS----------------------------------------------------------------
+# MUNGE TX_PVLS data ----------------------------------------------------
+
+#filter
+df_txpvls <- dfmsd %>% 
+  filter(fundingagency == "USAID",
+         fiscal_year == 2020,
+         indicator == "TX_PVLS",
+         standardizeddisaggregate %in% c("Total Denominator")) 
+
+#aggregate
+df_txpvls <- df_txpvls %>% 
+  group_by(operatingunit, psnu, psnuuid, indicator, modality, standardizeddisaggregate) %>%
+  summarise(targets = sum(targets, na.rm = TRUE)) %>% 
+  ungroup()
+
+#spread in TX_PVLS dataset
+df_txpvls <- df_txpvls %>% 
+  mutate(modality = str_remove_all(modality, " ")) %>% 
+  pivot_wider(names_from = c(indicator, modality, standardizeddisaggregate),
+              values_from = targets)
