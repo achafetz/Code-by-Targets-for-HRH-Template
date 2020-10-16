@@ -1,0 +1,4 @@
+#testing merge code for HTS_TST and HTS_SELF targets
+#the one you list first will be first in the merged dataframe, so would want to use in order the indicators appear - PrEP, then HTS, then TX)
+
+df_htsmerged <- merge(df_hts, df_htsself)
