@@ -1,0 +1,20 @@
+# MUNGE PMTCT_ART data ----------------------------------------------------
+
+#filter
+df_pmtctart <- dfmsd %>% 
+  filter(fundingagency == "USAID",
+         fiscal_year == 2020,
+         indicator == "PMTCT_ART",
+         otherdisaggregate %in% c("Life-long ART, New", "Life-long ART, Already")) 
+
+#aggregate
+df_pmtctart <- df_pmtctart %>% 
+  group_by(operatingunit, psnu, psnuuid, indicator, modality, otherdisaggregate) %>%
+  summarise(targets = sum(targets, na.rm = TRUE)) %>% 
+  ungroup()
+
+#spread in PMTCT_ART dataset
+df_pmtctart <- df_pmtctart %>% 
+  mutate(modality = str_remove_all(modality, " ")) %>% 
+  pivot_wider(names_from = c(indicator, modality, otherdisaggregate),
+              values_from = targets)
