@@ -1,0 +1,23 @@
+Standardized disag for HTS_SELF will be total numerator
+
+# MUNGE HTS_SELF MODALITIES ----------------------------------------------------
+
+#filter
+df_htsself <- df %>% 
+  filter(fundingagency == "USAID",
+         fiscal_year == 2020,
+         indicator == "HTS_SELF",
+         standardizeddisaggregate %in% c("Total Numerator")) 
+
+#aggregate
+df_htsself <- df_htsself %>% 
+  filter(targets != 0) %>% 
+  group_by(operatingunit, psnu, psnuuid, indicator, modality) %>%
+  summarise(targets = sum(targets, na.rm = TRUE)) %>% 
+  ungroup()
+
+#spread
+df_htsself <- df_htsself %>% 
+  mutate(modality = str_remove_all(modality, " ")) %>% 
+  pivot_wider(names_from = c(indicator, modality),
+              values_from = targets)
