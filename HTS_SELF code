@@ -11,7 +11,6 @@ df_htsself <- df %>%
 
 #aggregate
 df_htsself <- df_htsself %>% 
-  filter(targets != 0) %>% 
   group_by(operatingunit, psnu, psnuuid, indicator, modality) %>%
   summarise(targets = sum(targets, na.rm = TRUE)) %>% 
   ungroup()
