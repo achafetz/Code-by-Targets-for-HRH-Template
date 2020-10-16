@@ -1,23 +1,22 @@
-# MUNGE TX_NEW  ----------------------------------------------------
+
+# MUNGE TX_NEW data ----------------------------------------------------
 
 #filter
-df_txnew <- df %>% 
+df_txnew <- dfmsd %>% 
   filter(fundingagency == "USAID",
          fiscal_year == 2020,
          indicator == "TX_NEW",
-         standardizeddisaggregate %in% c("Total Numerator")) 
-
-#start back here
+         standardizeddisaggregate %in% c("Total Numerator", "KeyPop/HIVStatus")) 
 
 #aggregate
-df_prepcurr <- df_prepcurr %>% 
+df_txnew <- df_txnew %>% 
   filter(targets != 0) %>% 
-  group_by(operatingunit, psnu, psnuuid, indicator, modality) %>%
+  group_by(operatingunit, psnu, psnuuid, indicator, modality, standardizeddisaggregate) %>%
   summarise(targets = sum(targets, na.rm = TRUE)) %>% 
   ungroup()
 
-#spread in PrEPCURR dataset
-df_prepcurr <- df_prepcurr %>% 
+#spread in TX_CURR dataset
+df_txnew <- df_txnew %>% 
   mutate(modality = str_remove_all(modality, " ")) %>% 
-  pivot_wider(names_from = c(indicator, modality),
+  pivot_wider(names_from = c(indicator, modality, standardizeddisaggregate),
               values_from = targets)
