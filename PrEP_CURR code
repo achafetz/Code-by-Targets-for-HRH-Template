@@ -9,7 +9,6 @@ df_prepcurr <- df %>%
 
 #aggregate
 df_prepcurr <- df_prepcurr %>% 
-  filter(targets != 0) %>% 
   group_by(operatingunit, psnu, psnuuid, indicator, modality) %>%
   summarise(targets = sum(targets, na.rm = TRUE)) %>% 
   ungroup()
