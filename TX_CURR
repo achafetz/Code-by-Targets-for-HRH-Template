@@ -2,7 +2,7 @@
 #took out the targets != O reference and that worked - I think will need to do this for the others too to make sure we get the full lists of PSNUs
 
 #filter
-df_txcurr <- dfmsd %>% 
+df_txcurr <- df %>% 
   filter(fundingagency == "USAID",
          fiscal_year == 2020,
          indicator == "TX_CURR",
