@@ -14,20 +14,20 @@ df <- vroom(path)
 # MUNGE HTS_TST MODALITIES ----------------------------------------------------
 
 #filter
-df_hts <- df %>% 
+df_htstst <- df %>% 
   filter(fundingagency == "USAID",
          fiscal_year == 2020,
          indicator == "HTS_TST",
          standardizeddisaggregate %in% c("Modality/Age/Sex/Result", "Modality/Age Aggregated/Sex/Result")) 
 
 #aggregate
-df_hts <- df_hts %>% 
+df_htstst <- df_htstst %>% 
   group_by(operatingunit, psnu, psnuuid, indicator, modality) %>%
   summarise(targets = sum(targets, na.rm = TRUE)) %>% 
   ungroup()
 
 #spread
-df_hts <- df_hts %>% 
+df_htstst <- df_htstst %>% 
   mutate(modality = str_remove_all(modality, " ")) %>% 
   pivot_wider(names_from = c(indicator, modality),
               values_from = targets)
