@@ -1,7 +1,7 @@
 # MUNGE TX_PVLS data ----------------------------------------------------
 
 #filter
-df_txpvls <- dfmsd %>% 
+df_txpvls <- df %>% 
   filter(fundingagency == "USAID",
          fiscal_year == 2020,
          indicator == "TX_PVLS",
