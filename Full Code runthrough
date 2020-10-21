@@ -107,7 +107,7 @@ library(glue)
     select(all_of(full_col_list))
   
 #export
-  write.csv(df_wide, 'Dataout/mer_targets.csv', na = "")
+  write_csv(df_wide, 'Dataout/mer_targets.csv', na = "")
   
 # MUNGE PREP_NEW  ----------------------------------------------------
 
