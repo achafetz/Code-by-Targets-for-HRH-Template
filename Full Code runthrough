@@ -21,6 +21,16 @@ library(ICPIutilities)
            standardizeddisaggregate %in% c("Total Numerator", "Total Denominator",
                                            "Modality/Age/Sex/Result", "Modality/Age Aggregated/Sex/Result",
                                            "KeyPop/HIVStatus", "Age/NewExistingArt/Sex/HIVStatus"))
+#remove extra disaggs
+  df_fltr <- df_fltr %>% 
+    filter(!(indicator %in% c("HTS_TST", "PMTCT_ART") & 
+               standardizeddisaggregate %in% c("Total Numerator", "Total Denominator"))) %>% 
+    filter(!(indicator == "TX_PVLS" & standardizeddisaggregate == "Total Numerator"))
+  
+#check indicators/disaggs
+  # df_fltr %>% 
+  #   arrange(indicator) %>% 
+  #   distinct(indicator, standardizeddisaggregate)
   
 # MUNGE PREP_NEW  ----------------------------------------------------
 
