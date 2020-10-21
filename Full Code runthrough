@@ -4,12 +4,12 @@ library(tidyverse)
 library(vroom)
 library(ICPIutilities)
 
-
 # IMPORT (don't forget to change direction from / to /------------------------------------------------------------------
 
-path <- "C:/Users/jhoover/OneDrive - Credence Management Solutions LLC/Documents/R files/Data.FI HRH activity/MER_Structured_Datasets_PSNU_IM_FY18-21_20200918_v2_1_Zambia.txt"
+  path <- "Data/MER_Structured_Datasets_PSNU_IM_FY18-21_20200918_v2_1_Zambia.zip"
+  
+  df <- vroom(path) 
 
-df <- vroom(path) 
 
 # MUNGE PREP_NEW  ----------------------------------------------------
 
