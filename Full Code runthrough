@@ -10,7 +10,18 @@ library(ICPIutilities)
   
   df <- vroom(path) 
 
-
+# MUNGE -------------------------------------------------------------------
+  
+#filter
+  df_fltr <- df %>% 
+    filter(fundingagency == "USAID",
+           fiscal_year == 2020,
+           indicator %in% c("PrEP_NEW", "PrEP_CURR", "HTS_SELF", "HTS_TST",
+                            "TX_NEW", "TX_CURR", "TX_PVLS", "PMTCT_ART"),
+           standardizeddisaggregate %in% c("Total Numerator", "Total Denominator",
+                                           "Modality/Age/Sex/Result", "Modality/Age Aggregated/Sex/Result",
+                                           "KeyPop/HIVStatus", "Age/NewExistingArt/Sex/HIVStatus"))
+  
 # MUNGE PREP_NEW  ----------------------------------------------------
 
 #filter
