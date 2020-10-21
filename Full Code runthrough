@@ -47,6 +47,13 @@ library(glue)
   #   distinct(indicator, standardizeddisaggregate, otherdisaggregate, modality,suffix) %>% 
   #   print(n = Inf)
   
+#aggregate
+  df_agg <- df_fltr %>%
+    filter(targets != 0) %>% 
+    group_by(operatingunit, psnu, psnuuid, indicator, suffix) %>%
+    summarise(targets = sum(targets, na.rm = TRUE)) %>% 
+    ungroup()
+  
 # MUNGE PREP_NEW  ----------------------------------------------------
 
 #filter
