@@ -106,6 +106,17 @@ library(glue)
   df_wide <- df_wide %>% 
     select(all_of(full_col_list))
   
-#export
+#export targets
   write_csv(df_wide, 'Dataout/mer_targets.csv', na = "")
+  
+
+# PSNU LIST ---------------------------------------------------------------
+
+#distinct list of districts
+  df_psnus <- df %>% 
+    distinct(operatingunit, psnu, psnuuid) %>% 
+    arrange(operatingunit, psnu)
+  
+#export targets
+  write_csv(df_psnus, 'Dataout/psnu_list.csv', na = "")
   
