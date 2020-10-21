@@ -62,6 +62,50 @@ library(glue)
   
   # glimpse(df_wide)
   
+#full column list to ensure match to file structure
+  full_col_list <- c("operatingunit",
+                     "psnu",
+                     "psnuuid",
+                     "PrEP_NEW.Total",
+                     "PrEP_CURR.Total",
+                     "HTS_SELF.Total",
+                     "HTS_TST.MobileMod",
+                     "HTS_TST.IndexMod",
+                     "HTS_TST.Index",
+                     "HTS_TST.PMTCTANC",
+                     "HTS_TST.PostANC1",
+                     "HTS_TST.STIClinic",
+                     "HTS_TST.OtherPITC",
+                     "HTS_TST.Inpat",
+                     "TX_NEW.Total",
+                     "TX_NEW.KP",
+                     "TX_CURR.Total",
+                     "TX_CURR.KP",
+                     "PMTCT_ART.LifelongARTNew",
+                     "PMTCT_ART.LifelongARTAlready",
+                     "TX_PVLS_D.Total"
+  )
+  
+  #modalities not in the template
+    # "HTS_TST.EmergencyWard",
+    # "HTS_TST.Malnutrition",
+    # "HTS_TST.OtherMod",
+    # "HTS_TST.Pediatric",
+    # "HTS_TST.TBClinic",
+    # "HTS_TST.VCT",
+    # "HTS_TST.VCTMod",
+    # "HTS_TST.VMMC",
+  
+#list of cols missing from the dataset
+  missingscols <- setdiff(full_col_list, names(df_wide))
+  
+#add missing cols from the dataset
+  df_wide[,missingscols]=NA
+  
+#arrange to match
+  df_wide <- df_wide %>% 
+    select(all_of(full_col_list))
+  
 # MUNGE PREP_NEW  ----------------------------------------------------
 
 #filter
