@@ -3,6 +3,7 @@
 library(tidyverse)
 library(vroom)
 library(ICPIutilities)
+library(glue)
 
 # IMPORT (don't forget to change direction from / to /------------------------------------------------------------------
 
@@ -31,6 +32,20 @@ library(ICPIutilities)
   # df_fltr %>% 
   #   arrange(indicator) %>% 
   #   distinct(indicator, standardizeddisaggregate)
+  
+#include in var name
+  df_fltr <- df_fltr %>% 
+    mutate(indicator = ifelse(numeratordenom == "D", glue("{indicator}_{numeratordenom}"), indicator),
+           suffix = case_when(!is.na(modality) ~ modality,
+                              indicator == "PMTCT_ART" ~ otherdisaggregate,
+                              str_detect(standardizeddisaggregate, "KeyPop") ~ "KP",
+                              TRUE ~ "Total"),
+           suffix = str_remove_all(suffix, "-|,| "))
+
+#check suffix
+  # df_fltr %>% 
+  #   distinct(indicator, standardizeddisaggregate, otherdisaggregate, modality,suffix) %>% 
+  #   print(n = Inf)
   
 # MUNGE PREP_NEW  ----------------------------------------------------
 
