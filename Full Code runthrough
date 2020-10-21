@@ -106,6 +106,9 @@ library(glue)
   df_wide <- df_wide %>% 
     select(all_of(full_col_list))
   
+#export
+  write.csv(df_wide, 'Dataout/mer_targets.csv', na = "")
+  
 # MUNGE PREP_NEW  ----------------------------------------------------
 
 #filter
